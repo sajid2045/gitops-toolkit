@@ -1,0 +1,2 @@
+docker build -tgitops-toolkit .
+
