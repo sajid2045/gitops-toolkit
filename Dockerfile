@@ -15,7 +15,7 @@ ARG EKSCTL_VERSION=latest_release
 ARG KUBECTL_ARCH=linux/amd64
 ARG HELM_VERSION=v2.12.1
 RUN     apt-get update 
-RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make && \
+RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff && \
         apt-get install -y  vim ca-certificates && \
         apt-get install -y less 
 
