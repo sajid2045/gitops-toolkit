@@ -64,6 +64,8 @@ RUN echo "source /etc/bash_completion" >> /root/.bashrc
 RUN echo "complete -C '/usr/local/bin/aws_completer' aws" >> /root/.bashrc
 RUN eksctl completion bash > /root/.eksctl_completion && echo "source /root/.eksctl_completion" >> /root/.bashrc 
 
+RUN echo 'export GOROOT=/usr/local/go' >> /root/.bashrc
+
 WORKDIR "/src"
 
 CMD /bin/bash
