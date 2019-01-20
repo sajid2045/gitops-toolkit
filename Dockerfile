@@ -58,6 +58,8 @@ RUN rm -rf aws-iam-authenticator
 RUN chmod +x /usr/local/bin/heptio-authenticator-aws
 
 ADD requirements.txt /root/requirements.txt 
+ADD json2yaml /usr/local/bin/json2yaml
+RUN chmod +x /usr/local/bin/json2yaml
 RUN pip install -r /root/requirements.txt 
 
 RUN echo "source /etc/bash_completion" >> /root/.bashrc

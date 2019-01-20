@@ -1,2 +1,2 @@
-docker build -tgitops-toolkit .
+docker build -t sajid2045/gitops-toolkit .
 
