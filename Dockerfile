@@ -15,7 +15,7 @@ ARG EKSCTL_VERSION=latest_release
 ARG KUBECTL_ARCH=linux/amd64
 ARG HELM_VERSION=v2.12.1
 RUN     apt-get update 
-RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff && \
+RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree && \
         apt-get install -y  vim ca-certificates && \
         apt-get install -y less 
 
@@ -68,6 +68,14 @@ RUN eksctl completion bash > /root/.eksctl_completion && echo "source /root/.eks
 #TODO: better way ?
 RUN echo 'export GOROOT=/usr/local/go' >> /root/.bashrc 
 RUN echo 'export GOPATH=/root/go_path' >> /root/.bashrc
+
+#Install JX 
+ARG JX_VERSION=v1.3.783
+RUN mkdir -p ~/.jx/bin
+RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
+RUN export PATH=$PATH:/root/.jx/bin
+RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
+
 
 WORKDIR "/src"
 
