@@ -75,6 +75,7 @@ RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
+RUN echo 'source <(kubectl completion bash)' >> /root/.bashrc
 
 
 WORKDIR "/src"
