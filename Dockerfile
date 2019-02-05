@@ -1,6 +1,5 @@
 FROM python:2.7
 ENV AWS_PROFILE=default
-RUN pip install awscli
 
 ARG GO_VERSION=1.11
 # KUBECTL_SOURCE: Change to kubernetes-dev/ci for CI
@@ -15,9 +14,7 @@ ARG EKSCTL_VERSION=latest_release
 ARG KUBECTL_ARCH=linux/amd64
 ARG HELM_VERSION=v2.12.1
 RUN     apt-get update 
-RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree && \
-        apt-get install -y  vim ca-certificates && \
-        apt-get install -y less 
+RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree vim ca-certificates less
 
 RUN     wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz && \        
         tar -xvf go1.10.3.linux-amd64.tar.gz 
