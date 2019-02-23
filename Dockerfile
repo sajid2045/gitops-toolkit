@@ -1,83 +1,45 @@
-FROM python:2.7
-ENV AWS_PROFILE=default
-RUN pip install awscli
+FROM conda/miniconda3
 
-ARG GO_VERSION=1.11
-# KUBECTL_SOURCE: Change to kubernetes-dev/ci for CI
-ARG KUBECTL_SOURCE=kubernetes-release/release
-ARG KUBECTL_VERSION=v1.11.5
-
-
-# KUBECTL_TRACK: Currently latest from KUBECTL_SOURCE. Change to latest-1.3.txt, etc. if desired.
-ARG KUBECTL_TRACK=stable.txt
-# ARG EKSCTL_VERSION=0.1.18
-ARG EKSCTL_VERSION=latest_release
-ARG KUBECTL_ARCH=linux/amd64
-ARG HELM_VERSION=v2.12.1
 RUN     apt-get update 
-RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree && \
-        apt-get install -y  vim ca-certificates && \
-        apt-get install -y less 
+RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree ca-certificates less vim
 
-RUN     wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz && \        
-        tar -xvf go1.10.3.linux-amd64.tar.gz 
+RUN conda install -y nb_conda_kernels
+RUN conda create -y -n py27 python=2.7 ipykernel
+RUN conda create -y -n awscli python=3.6.3 ipykernel
+RUN conda create -y -n sceptre python=3.6.3 ipykernel
 
-RUN     ls -la go/
-RUN     mv go /usr/local/ && mkdir /root/go_path && \
-        export GOROOT=/usr/local/go && \
-        export export GOPATH=/root/go_path && \
-        export PATH=$GOPATH/bin:$GOROOT/bin:$PATH && \
-        export GOROOT_BOOTSTRAP="$(go env GOROOT)" && \
-        echo $GOROOT_BOOTSTRAP
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
+RUN conda init bash
+RUN source /root/.bashrc && conda activate awscli && conda install -y -c conda-forge awscli && conda install -y -c conda-forge/label/gcc7 awscli && conda install -y -c conda-forge/label/cf201901 awscli
+RUN source /root/.bashrc && conda activate awscli && pip install taskcat
+RUN source /root/.bashrc && conda activate sceptre && pip install sceptre
 
-RUN     echo "will try to get kubectl from : https://storage.googleapis.com/${KUBECTL_SOURCE}/${KUBECTL_VERSION}/bin/${KUBECTL_ARCH}/kubectl"        
+RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
+RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 
-RUN     curl -SsL --retry 5 "https://storage.googleapis.com/${KUBECTL_SOURCE}/${KUBECTL_VERSION}/bin/${KUBECTL_ARCH}/kubectl" > /usr/bin/kubectl && \
-        chmod +x /usr/bin/kubectl 
-
-RUN     kubectl version --client=true
-        
-RUN  chmod +x /usr/local/go/bin/*
-ENV  PATH "$PATH:/root/go_path:/usr/local/go/bin"
-ENV TZ=Australia/Sydney
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-RUN curl --location https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz | tar xz -C /tmp 
-RUN mv /tmp/linux-amd64/helm /usr/local/bin/ && chmod +x /usr/local/bin 
+# ADD requirements.txt /root/requirements.txt 
+# ADD json2yaml /usr/local/bin/json2yaml
+# RUN chmod +x /usr/local/bin/json2yaml
+# RUN pip install -r /root/requirements.txt 
 
 
-ARG EKSCTL_VERSION=0.1.18
-
-RUN curl --location "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-RUN mv /tmp/eksctl /usr/local/bin
-
-RUN wget https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/aws-iam-authenticator && cp -v aws-iam-authenticator /usr/local/bin/heptio-authenticator-aws && cp -v aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
-
-RUN rm -rf aws-iam-authenticator
-RUN chmod +x /usr/local/bin/heptio-authenticator-aws
-
-ADD requirements.txt /root/requirements.txt 
-ADD json2yaml /usr/local/bin/json2yaml
-RUN chmod +x /usr/local/bin/json2yaml
-RUN pip install -r /root/requirements.txt 
-
-RUN echo "source /etc/bash_completion" >> /root/.bashrc
-RUN echo "complete -C '/usr/local/bin/aws_completer' aws" >> /root/.bashrc
-RUN eksctl completion bash > /root/.eksctl_completion && echo "source /root/.eksctl_completion" >> /root/.bashrc 
-#TODO: better way ?
-RUN echo 'export GOROOT=/usr/local/go' >> /root/.bashrc 
-RUN echo 'export GOPATH=/root/go_path' >> /root/.bashrc
-
-#Install JX 
-ARG JX_VERSION=v1.3.783
-RUN mkdir -p ~/.jx/bin
-RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
-RUN export PATH=$PATH:/root/.jx/bin
-RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
-RUN echo 'source <(kubectl completion bash)' >> /root/.bashrc
+# RUN pip install --upgrade pip
+# RUN pip install sceptre
 
 
-WORKDIR "/src"
 
-CMD /bin/bash
+
+# ARG GO_VERSION=1.11.5
+# RUN     wget https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz && \        
+#         tar -xvf go$GO_VERSION.linux-amd64.tar.gz 
+# RUN     ls -la go/
+# RUN     mv go /usr/local/ && mkdir /root/go_path && \
+#         echo export GOROOT=/usr/local/go >> ~/.bashrc && \
+#         echo export export GOPATH=/root/go_path >> ~/.bashrc && \
+#         echo export PATH=$GOPATH/bin:$GOROOT/bin:$PATH >> ~/.bashrc && \
+#         echo export GOROOT_BOOTSTRAP='"$(go env GOROOT)"' >> ~/.bashrc 
+
+# RUN source activate py36
+
+# RUN apt-get install -y vim 
