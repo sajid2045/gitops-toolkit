@@ -62,6 +62,12 @@ RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-lin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
 
+#Install CCloud Client
+ARG KAFKA_CLIENT_URL='https://s3-us-west-2.amazonaws.com/confluent.cloud/cli/ccloud-latest.tar.gz'
+RUN mkdir /usr/local/kafka-client && cd kafka-client && wget KAFKA_CLIENT_URL && tar -xvzf ccloud-latest.tar.gz && rm -rf ccloud-latest.tar.gz && DIR=$(ls) cd $DIR/bin && echo $(PWD)
+
+
+
 
 WORKDIR "/src"
 CMD /bin/bash
