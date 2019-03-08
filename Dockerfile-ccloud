@@ -1,0 +1,9 @@
+FROM amazoncorretto:8
+
+RUN yum -y update 
+RUN yum install -y wget tar.x86_64  &&     yum clean all
+
+
+RUN mkdir -p /usr/local/ccloud/ && cd /usr/local/ccloud/ && wget https://s3-us-west-2.amazonaws.com/confluent.cloud/cli/ccloud-latest.tar.gz && tar -xvzf ccloud-latest.tar.gz && rm -rf ccloud-latest.tar.gz 
+
+RUN cd /usr/local/ccloud && export LOC=$(ls) && cd $LOC && export LOC=$(pwd) && echo "PATH=$PATH:$LOC/bin" >> /root/.bashrc
