@@ -1,7 +1,21 @@
 FROM conda/miniconda3
 
 RUN     apt-get update 
-RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree vim ca-certificates less
+RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree vim ca-certificates less apt-transport-https
+
+RUN     curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl
+RUN     curl -o kubectl.sha256 https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl.sha256
+RUN     openssl sha1 -sha256 kubectl
+RUN     chmod +x ./kubectl
+RUN     cp ./kubectl /usr/local/bin/kubectl 
+
+
+
+# RUN     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg |  apt-key add -
+# RUN     echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" |  tee -a /etc/apt/sources.list.d/kubernetes.list
+# RUN     apt-get update
+# RUN     apt-get install -y kubectl
+
 
 RUN conda install -y nb_conda_kernels
 RUN conda create -y -n py27 python=2.7 ipykernel
@@ -61,12 +75,6 @@ RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
-
-#Install CCloud Client
-ARG KAFKA_CLIENT_URL='https://s3-us-west-2.amazonaws.com/confluent.cloud/cli/ccloud-latest.tar.gz'
-RUN mkdir /usr/local/kafka-client && cd kafka-client && wget KAFKA_CLIENT_URL && tar -xvzf ccloud-latest.tar.gz && rm -rf ccloud-latest.tar.gz && DIR=$(ls) cd $DIR/bin && echo $(PWD)
-
-
 
 
 WORKDIR "/src"
