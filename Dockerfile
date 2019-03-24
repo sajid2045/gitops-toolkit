@@ -1,7 +1,8 @@
 FROM conda/miniconda3
 
-RUN     apt-get update 
-RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree vim ca-certificates less apt-transport-https
+RUN     apt-get update -y
+RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree vim ca-certificates less apt-transport-https 
+RUN     apt-get install -y default-jdk maven
 
 RUN     curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl
 RUN     curl -o kubectl.sha256 https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl.sha256
@@ -31,6 +32,8 @@ RUN source /root/.bashrc && conda activate sceptre && pip install sceptre
 
 RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
 RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
+
+ADD cheatsheets.md /root/cheatsheets.md
 
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml
