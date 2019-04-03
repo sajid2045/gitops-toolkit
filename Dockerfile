@@ -1,11 +1,12 @@
 FROM conda/miniconda3
 
+ARG KUBECTL_VERSION='1.12.7/2019-03-27'
 RUN     apt-get update -y
 RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree vim ca-certificates less apt-transport-https 
 RUN     apt-get install -y default-jdk maven
 
-RUN     curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl
-RUN     curl -o kubectl.sha256 https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl.sha256
+RUN     curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl
+RUN     curl -o kubectl.sha256 https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl.sha256
 RUN     openssl sha1 -sha256 kubectl
 RUN     chmod +x ./kubectl
 RUN     cp ./kubectl /usr/local/bin/kubectl 
@@ -78,7 +79,7 @@ RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
-
+RUN echo "source <(kubectl completion bash)" >> /root/.bashrc 
 
 WORKDIR "/src"
 CMD /bin/bash
