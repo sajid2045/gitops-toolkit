@@ -14,3 +14,5 @@ jx install --gitops=true --git-provider-url='https://bitbucket.org/' --git-api-t
 ```
 
 
+jx install --git-provider-url='https://bitbucket.org/' --git-api-token=$GIT_TOKEN --default-admin-password=$ADMIN_PASS --provider=eks --domain=$ROUTE53_DOMAIN --git-private=true  --default-environment-prefix=datalakedev --git-username=$GIT_USER --environment-git-owner=$GIT_OWNER
+--no-tiller

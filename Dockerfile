@@ -79,7 +79,14 @@ RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
+
 RUN echo "source <(kubectl completion bash)" >> /root/.bashrc 
+RUN echo "source <(jx completion bash)" >> /root/.bashrc 
+
+#install kustomize
+
+RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep linux |cut -d '"' -f 4 | xargs curl -O -L
+RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
 
 WORKDIR "/src"
 CMD /bin/bash
