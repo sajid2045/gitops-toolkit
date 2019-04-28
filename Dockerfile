@@ -60,7 +60,7 @@ RUN mv /tmp/linux-amd64/helm /usr/local/bin/ && chmod +x /usr/local/bin
 RUN helm init --client-only
 
 
-ARG EKSCTL_VERSION=0.1.18
+ARG EKSCTL_VERSION=latest_release
 
 RUN curl --location "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 RUN mv /tmp/eksctl /usr/local/bin
@@ -79,7 +79,14 @@ RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
+
 RUN echo "source <(kubectl completion bash)" >> /root/.bashrc 
+RUN echo "source <(jx completion bash)" >> /root/.bashrc 
+
+#install kustomize
+
+RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep linux |cut -d '"' -f 4 | xargs curl -O -L
+RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
 
 
 RUN echo "alias k=kubectl" >> /root/.bashrc
