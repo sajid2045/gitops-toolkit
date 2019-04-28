@@ -57,7 +57,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ARG HELM_VERSION=v2.12.1
 RUN curl --location https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz | tar xz -C /tmp 
 RUN mv /tmp/linux-amd64/helm /usr/local/bin/ && chmod +x /usr/local/bin 
-
+RUN helm init --client-only
 
 
 ARG EKSCTL_VERSION=0.1.18
@@ -80,6 +80,12 @@ RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-lin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
 RUN echo "source <(kubectl completion bash)" >> /root/.bashrc 
+
+
+RUN echo "alias k=kubectl" >> /root/.bashrc
+
+
+
 
 WORKDIR "/src"
 CMD /bin/bash
