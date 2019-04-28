@@ -60,7 +60,7 @@ RUN mv /tmp/linux-amd64/helm /usr/local/bin/ && chmod +x /usr/local/bin
 
 
 
-ARG EKSCTL_VERSION=0.1.18
+ARG EKSCTL_VERSION=latest_release
 
 RUN curl --location "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 RUN mv /tmp/eksctl /usr/local/bin
