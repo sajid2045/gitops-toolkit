@@ -34,7 +34,6 @@ RUN source /root/.bashrc && conda activate sceptre && pip install sceptre
 RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
 RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 
-ADD cheatsheets.md /root/cheatsheets.md
 
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml
@@ -48,6 +47,9 @@ RUN echo 'export GOROOT=/usr/local/go' >> /root/.bashrc
 RUN echo 'export GOPATH=/root/go_path' >> /root/.bashrc
 RUN echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> ~/.bashrc
 RUN echo 'export GOROOT_BOOTSTRAP=/usr/local/go' >> ~/.bashrc 
+
+ADD dev-cheats /root/dev-cheats
+RUN echo 'export PATH=$PATH:/root/dev-cheats/'
 
 ENV TZ=Australia/Sydney
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -90,6 +92,7 @@ RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/b
 
 
 RUN echo "alias k=kubectl" >> /root/.bashrc
+RUN echo "alias ap=kubectl get pods --all-namespaces" >> /root/.bashrc
 
 
 
