@@ -60,6 +60,7 @@ ARG HELM_VERSION=v2.12.1
 RUN curl --location https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz | tar xz -C /tmp 
 RUN mv /tmp/linux-amd64/helm /usr/local/bin/ && chmod +x /usr/local/bin 
 RUN helm init --client-only
+RUN helm repo add jenkins-x http://chartmuseum.jenkins-x.io
 
 
 ARG EKSCTL_VERSION=latest_release
@@ -92,7 +93,7 @@ RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/b
 
 
 RUN echo "alias k=kubectl" >> /root/.bashrc
-RUN echo "alias ap=kubectl get pods --all-namespaces" >> /root/.bashrc
+RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
 
 
 
