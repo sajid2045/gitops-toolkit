@@ -1,23 +1,4 @@
-FROM conda/miniconda3
-
-ARG KUBECTL_VERSION='1.12.7/2019-03-27'
-RUN     apt-get update -y
-RUN     apt-get install -y   wget curl jq git bash bash-completion gcc musl-dev openssl  make groff tree vim ca-certificates less apt-transport-https 
-RUN     apt-get install -y default-jdk maven
-
-RUN     curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl
-RUN     curl -o kubectl.sha256 https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl.sha256
-RUN     openssl sha1 -sha256 kubectl
-RUN     chmod +x ./kubectl
-RUN     cp ./kubectl /usr/local/bin/kubectl 
-
-
-
-# RUN     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg |  apt-key add -
-# RUN     echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" |  tee -a /etc/apt/sources.list.d/kubernetes.list
-# RUN     apt-get update
-# RUN     apt-get install -y kubectl
-
+FROM sajid2045/conda-base
 
 RUN conda install -y nb_conda_kernels
 RUN conda create -y -n py27 python=2.7 ipykernel
@@ -26,34 +7,22 @@ RUN conda create -y -n sceptre python=3.6.3 ipykernel
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
 RUN conda init bash
 RUN source /root/.bashrc && conda activate awscli && conda install -y -c conda-forge awscli && conda install -y -c conda-forge/label/gcc7 awscli && conda install -y -c conda-forge/label/cf201901 awscli
 RUN source /root/.bashrc && conda activate awscli && pip install taskcat
 RUN source /root/.bashrc && conda activate sceptre && pip install sceptre
 
-RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
-RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
+RUN mkdir /downloads 
+WORKDIR "/downloads"
 
-
-ADD json2yaml /usr/local/bin/json2yaml
-RUN chmod +x /usr/local/bin/json2yaml
-
-# INSTALL GO
-ARG GO_VERSION=1.11.5
-RUN     wget https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz && \        
-        tar -xvf go$GO_VERSION.linux-amd64.tar.gz 
-RUN    mv go/ /usr/local/ && mkdir /root/go_path
-RUN echo 'export GOROOT=/usr/local/go' >> /root/.bashrc 
-RUN echo 'export GOPATH=/root/go_path' >> /root/.bashrc
-RUN echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> ~/.bashrc
-RUN echo 'export GOROOT_BOOTSTRAP=/usr/local/go' >> ~/.bashrc 
-
-ADD dev-cheats /root/dev-cheats
-RUN echo 'export PATH=$PATH:/root/dev-cheats/'
-
-ENV TZ=Australia/Sydney
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
+ARG KUBECTL_VERSION='1.12.7/2019-03-27'
+RUN     curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl
+RUN     curl -o kubectl.sha256 https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl.sha256
+RUN     openssl sha1 -sha256 kubectl
+RUN     chmod +x ./kubectl
+RUN     cp ./kubectl /usr/local/bin/kubectl 
 
 # INSTALL HELM
 ARG HELM_VERSION=v2.12.1
@@ -62,12 +31,12 @@ RUN mv /tmp/linux-amd64/helm /usr/local/bin/ && chmod +x /usr/local/bin
 RUN helm init --client-only
 RUN helm repo add jenkins-x http://chartmuseum.jenkins-x.io
 
-
+# INSTALL EKSCTL
 ARG EKSCTL_VERSION=latest_release
-
 RUN curl --location "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 RUN mv /tmp/eksctl /usr/local/bin
 
+# heptio-authenticator-aws
 RUN wget https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/aws-iam-authenticator 
 RUN cp -v aws-iam-authenticator /usr/local/bin/heptio-authenticator-aws && cp -v aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
 RUN chmod +x /usr/local/bin/heptio-authenticator-aws && chmod +x /usr/local/bin/aws-iam-authenticator
@@ -82,7 +51,6 @@ RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
 RUN echo 'export PATH=$PATH:/root/.jx/bin' >> /root/.bashrc
-
 RUN echo "source <(kubectl completion bash)" >> /root/.bashrc 
 RUN echo "source <(jx completion bash)" >> /root/.bashrc 
 
@@ -91,12 +59,19 @@ RUN echo "source <(jx completion bash)" >> /root/.bashrc
 RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep linux |cut -d '"' -f 4 | xargs curl -O -L
 RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
 
+ADD dev-cheats /root/dev-cheats
+RUN echo 'export PATH=$PATH:/root/dev-cheats/'
+
+ADD json2yaml /usr/local/bin/json2yaml
+RUN chmod +x /usr/local/bin/json2yaml
 
 RUN echo "alias k=kubectl" >> /root/.bashrc
 RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
 
+RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
+RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 
-
+RUN rm -rf /downloads
 
 WORKDIR "/src"
 CMD /bin/bash
