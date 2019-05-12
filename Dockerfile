@@ -7,8 +7,6 @@ RUN conda create -y -n sceptre python=3.6.3 ipykernel
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
 RUN conda init bash
 RUN source /root/.bashrc && conda activate awscli && conda install -y -c conda-forge awscli && conda install -y -c conda-forge/label/gcc7 awscli && conda install -y -c conda-forge/label/cf201901 awscli
 RUN source /root/.bashrc && conda activate awscli && pip install taskcat
@@ -71,7 +69,10 @@ RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
 RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
 RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 
-RUN rm -rf /downloads
+RUN conda clean --all --yes
+
+
+RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
 
 WORKDIR "/src"
 CMD /bin/bash
