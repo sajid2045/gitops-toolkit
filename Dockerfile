@@ -65,13 +65,11 @@ RUN chmod +x /usr/local/bin/json2yaml
 
 RUN echo "alias k=kubectl" >> /root/.bashrc
 RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
-
+RUN echo "alias po='kubectl get pods'" >> /root/.bashrc
 RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
 RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 
 RUN conda clean --all --yes
-
-
 RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
 
 WORKDIR "/src"
