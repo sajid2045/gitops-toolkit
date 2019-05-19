@@ -65,10 +65,22 @@ ARG KSONNET_VERSION=0.13.1
 RUN wget https://github.com/ksonnet/ksonnet/releases/download/v${KSONNET_VERSION}/ks_${KSONNET_VERSION}_linux_amd64.tar.gz && \
     tar -xzf ks_${KSONNET_VERSION}_linux_amd64.tar.gz && chmod +x ks_${KSONNET_VERSION}_linux_amd64/ks && cp -v ks_${KSONNET_VERSION}_linux_amd64/ks /usr/local/bin/
 
+# kubeflow
+
+ARG KUBEFLOW_SRC=/kubeflow/kubeflow-aws
+ARG KUBEFLOW_TAG=master
+
+RUN mkdir -p ${KUBEFLOW_SRC} && \
+    cd ${KUBEFLOW_SRC} && curl https://raw.githubusercontent.com/kubeflow/kubeflow/${KUBEFLOW_TAG}/scripts/download.sh | bash
+RUN echo "export PATH=\$PATH:${KUBEFLOW_SRC}/scripts" >> /root/.bashrc
+RUN echo "export KUBEFLOW_SRC=${KUBEFLOW_SRC}" >> /root/.bashrc
+
+
 
 
 ADD dev-cheats /root/dev-cheats
-RUN echo 'export PATH=$PATH:/root/dev-cheats/'
+RUN echo 'export PATH=$PATH:/root/dev-cheats/' >> /root/.bashrc
+
 
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml

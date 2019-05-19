@@ -10,3 +10,15 @@ aws iam list-roles \
     | startswith(\"$AWS_CLUSTER_NAME\") and contains(\"NodeInstanceRole\")) \
     .RoleName"
 ```
+
+
+export KFAPP=kfapp
+export REGION=ap-soutcheast-2
+export AWS_CLUSTER_NAME=datalake-dev
+export AWS_NODEGROUP_ROLE_NAMES=datalake-dev-node-role
+
+
+
+
+aws iam list-roles \
+    | jq -r ".Roles[].RoleName"
