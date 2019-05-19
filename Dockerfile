@@ -58,8 +58,7 @@ RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/late
 RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
 
 #kubetail
-RUN wget https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail && chmod +x kubetail && mv kubetail /usr/local/bin && kubetail
-
+RUN wget https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail && chmod +x kubetail && mv kubetail /usr/local/bin 
 ADD dev-cheats /root/dev-cheats
 RUN echo 'export PATH=$PATH:/root/dev-cheats/'
 
