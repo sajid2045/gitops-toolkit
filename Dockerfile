@@ -65,6 +65,23 @@ ARG KSONNET_VERSION=0.13.1
 RUN wget https://github.com/ksonnet/ksonnet/releases/download/v${KSONNET_VERSION}/ks_${KSONNET_VERSION}_linux_amd64.tar.gz && \
     tar -xzf ks_${KSONNET_VERSION}_linux_amd64.tar.gz && chmod +x ks_${KSONNET_VERSION}_linux_amd64/ks && cp -v ks_${KSONNET_VERSION}_linux_amd64/ks /usr/local/bin/
 
+#argo
+ARG ARGO_VERSION=v1.0.0
+RUN wget https://github.com/argoproj/argo-cd/releases/download/${ARGO_VERSION}/argocd-linux-amd64 && chmod +x argocd-linux-amd64 && mv argocd-linux-amd64 /usr/local/bin/argocd
+
+RUN conda clean --all --yes
+RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
+
+RUN echo "alias dep='kubectl get deploy'" >> /root/.bashrc
+RUN echo "alias ing='kubectl get ing'" >> /root/.bashrc
+RUN echo "alias svc='kubectl get svc'" >> /root/.bashrc
+RUN echo "alias pods='kubectl get pods'" >> /root/.bashrc
+RUN echo "alias k=kubectl" >> /root/.bashrc
+RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
+RUN echo "alias po='kubectl get pods'" >> /root/.bashrc
+RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
+RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
+RUN echo "export USER=root" >> /root/.bashrc
 
 
 ADD dev-cheats /root/dev-cheats
@@ -73,14 +90,6 @@ RUN echo 'export PATH=$PATH:/root/dev-cheats/'
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml
 
-RUN echo "alias k=kubectl" >> /root/.bashrc
-RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
-RUN echo "alias po='kubectl get pods'" >> /root/.bashrc
-RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
-RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
-
-RUN conda clean --all --yes
-RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
 
 WORKDIR "/src"
 CMD /bin/bash
