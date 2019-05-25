@@ -1,0 +1,1 @@
+kubectl run -it --rm test --image=sajid2045/gitops-toolkit --restart=Never --command -- sh
