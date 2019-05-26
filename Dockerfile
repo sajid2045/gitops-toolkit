@@ -67,7 +67,7 @@ RUN wget https://github.com/ksonnet/ksonnet/releases/download/v${KSONNET_VERSION
 
 #argo
 ARG ARGO_VERSION=v1.0.0
-RUN wget https://github.com/argoproj/argo-cd/releases/download/${ARGO_VERSION}/argocd-linux-amd64 && chmod +x argocd-linux-amd64 && mv argocd-linux-amd64 /usr/local/bin/argocd
+RUN wget https://github.com/argoproj/argo-cd/releases/download/${ARGO_VERSION}/argocd-linux-amd64 && chmod +x argocd-linux-amd64 && mv argocd-linux-amd64 /usr/local/bin/argo
 
 RUN conda clean --all --yes
 RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
