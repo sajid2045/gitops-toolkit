@@ -22,3 +22,10 @@ export AWS_NODEGROUP_ROLE_NAMES=datalake-dev-node-role
 
 aws iam list-roles \
     | jq -r ".Roles[].RoleName"
+
+
+######## HELM ######
+helm install stable/postgresql --name standalone --dry-run --debug
+helm template [LOCAL-CHART-NAME] -x templates/file.yaml
+helm upgrade --install
+
