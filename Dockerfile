@@ -82,7 +82,8 @@ RUN echo "alias po='kubectl get pods'" >> /root/.bashrc
 RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
 RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 RUN echo "export USER=root" >> /root/.bashrc
-
+RUN echo ". /usr/local/etc/profile.d/conda.sh" >> /root/.bashrc
+RUN echo "conda activate awscli" >> /root/.bashrc
 
 ADD dev-cheats /root/dev-cheats
 RUN echo 'export PATH=$PATH:/root/dev-cheats/'
