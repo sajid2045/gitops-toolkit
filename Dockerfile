@@ -79,9 +79,13 @@ RUN echo "alias pods='kubectl get pods'" >> /root/.bashrc
 RUN echo "alias k=kubectl" >> /root/.bashrc
 RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
 RUN echo "alias po='kubectl get pods'" >> /root/.bashrc
+RUN git config --global alias.co checkout
+RUN git config --global alias.br branch
+RUN git config --global alias.st status
 RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
 RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 RUN echo "export USER=root" >> /root/.bashrc
+
 RUN echo ". /usr/local/etc/profile.d/conda.sh" >> /root/.bashrc
 RUN echo "conda activate awscli" >> /root/.bashrc
 
