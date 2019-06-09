@@ -12,22 +12,38 @@ RUN source /root/.bashrc && conda activate awscli && conda install -y -c conda-f
 RUN source /root/.bashrc && conda activate awscli && pip install taskcat
 RUN source /root/.bashrc && conda activate sceptre && pip install sceptre
 
+
+#Versions
+ARG KUBECTL_VERSION="1.12.7/2019-03-27"
+ARG HELM_VERSION="2.14.0"
+ARG HELM_TILLER_VERSION="0.6.7"
+ARG HELM_DIFF_VERSION="v2.11.0+3"
+ARG KUBECTX_VERSION="0.6.3"
+ARG VELERO_VERSION="0.11.0"
+
+
 RUN mkdir /downloads 
 WORKDIR "/downloads"
 
-ARG KUBECTL_VERSION='1.12.7/2019-03-27'
-RUN     curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl
-RUN     curl -o kubectl.sha256 https://amazon-eks.s3-us-west-2.amazonaws.com/$KUBECTL_VERSION/bin/linux/amd64/kubectl.sha256
-RUN     openssl sha1 -sha256 kubectl
-RUN     chmod +x ./kubectl
-RUN     cp ./kubectl /usr/local/bin/kubectl 
 
-# INSTALL HELM
-ARG HELM_VERSION=v2.12.1
-RUN curl --location https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz | tar xz -C /tmp 
-RUN mv /tmp/linux-amd64/helm /usr/local/bin/ && chmod +x /usr/local/bin 
-RUN helm init --client-only
-RUN helm repo add jenkins-x http://chartmuseum.jenkins-x.io
+#kubectl
+RUN curl -L https://amazon-eks.s3-us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
+    curl -L https://amazon-eks.s3-us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/amd64/aws-iam-authenticator -o /usr/local/bin/aws-iam-authenticator && \
+    chmod +x /usr/local/bin/kubectl && \
+    chmod +x /usr/local/bin/aws-iam-authenticator
+
+#helm
+RUN curl -L https://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz -o /tmp/helm.tar.gz && \
+    tar -xvzf /tmp/helm.tar.gz -C /tmp && \
+    mv /tmp/linux-amd64/helm /usr/local/bin/helm && \
+    mv /tmp/linux-amd64/tiller /usr/local/bin/tiller && \
+    chmod +x /usr/local/bin/helm && \
+    chmod +x /usr/local/bin/tiller && \
+    helm init -c && \
+    helm plugin install https://github.com/rimusz/helm-tiller --version ${HELM_TILLER_VERSION}  && \
+    helm plugin install https://github.com/databus23/helm-diff --version ${HELM_DIFF_VERSION} && \
+    helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator && \
+    rm -rf /tmp/*
 
 # INSTALL EKSCTL
 ARG EKSCTL_VERSION=latest_release
@@ -69,6 +85,26 @@ RUN wget https://github.com/ksonnet/ksonnet/releases/download/v${KSONNET_VERSION
 ARG ARGO_VERSION=v1.0.0
 RUN wget https://github.com/argoproj/argo-cd/releases/download/${ARGO_VERSION}/argocd-linux-amd64 && chmod +x argocd-linux-amd64 && mv argocd-linux-amd64 /usr/local/bin/argo
 
+
+#kubectx
+RUN curl -L https://github.com/ahmetb/kubectx/archive/v${KUBECTX_VERSION}.tar.gz -o /tmp/kubectx.tar.gz && \
+    tar -xvzf /tmp/kubectx.tar.gz -C /tmp && \
+    mv /tmp/kubectx-${KUBECTX_VERSION}/kubectx /usr/local/bin/kubectx && \  
+    mv /tmp/kubectx-${KUBECTX_VERSION}/kubens /usr/local/bin/kubens && \  
+    chmod +x /usr/local/bin/kubectx && \  
+    chmod +x /usr/local/bin/kubens && \  
+    mv /tmp/kubectx-${KUBECTX_VERSION}/completion/kubectx.bash /usr/share/bash-completion/completions/kubectx.bash && \  
+    mv /tmp/kubectx-${KUBECTX_VERSION}/completion/kubens.bash /usr/share/bash-completion/completions/kubens.bash && \
+    rm -rf /tmp/*
+
+
+#velero
+RUN curl -L https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-amd64.tar.gz -o /tmp/velero.tar.gz && \
+    tar -xvzf /tmp/velero.tar.gz -C /tmp && \
+    mv /tmp/velero /usr/local/bin/velero && \
+    chmod +x /usr/local/bin/velero && \
+    rm -rf /tmp/*
+
 RUN conda clean --all --yes
 RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
 
@@ -79,18 +115,20 @@ RUN echo "alias pods='kubectl get pods'" >> /root/.bashrc
 RUN echo "alias k=kubectl" >> /root/.bashrc
 RUN echo 'alias ap="kubectl get pods --all-namespaces"' >> /root/.bashrc
 RUN echo "alias po='kubectl get pods'" >> /root/.bashrc
-RUN git config --global alias.co checkout
-RUN git config --global alias.br branch
-RUN git config --global alias.st status
 RUN echo "export LC_ALL=C.UTF-8" >> /root/.bashrc
 RUN echo "export LANG=C.UTF-8"   >> /root/.bashrc
 RUN echo "export USER=root" >> /root/.bashrc
-
-RUN echo ". /usr/local/etc/profile.d/conda.sh" >> /root/.bashrc
 RUN echo "conda activate awscli" >> /root/.bashrc
 
+RUN git config --global alias.co checkout
+RUN git config --global alias.br branch
+RUN git config --global alias.st status
+
 ADD dev-cheats /root/dev-cheats
-RUN echo 'export PATH=$PATH:/root/dev-cheats/'
+RUN echo 'export PATH=$PATH:/root/dev-cheats/' >> /root/.bashrc
+
+ADD conda-profile.sh /usr/local/etc/profile.d/conda.sh
+# RUN echo ". /usr/local/etc/profile.d/conda.sh" >> /root/.bashrc
 
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml
