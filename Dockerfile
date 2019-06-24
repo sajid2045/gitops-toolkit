@@ -127,7 +127,7 @@ RUN git config --global alias.st status
 ADD dev-cheats /root/dev-cheats
 RUN echo 'export PATH=$PATH:/root/dev-cheats/' >> /root/.bashrc
 
-ADD conda-profile.sh /usr/local/etc/profile.d/conda.sh
+# ADD conda-profile.sh /usr/local/etc/profile.d/conda.sh
 # RUN echo ". /usr/local/etc/profile.d/conda.sh" >> /root/.bashrc
 
 ADD json2yaml /usr/local/bin/json2yaml
