@@ -105,6 +105,15 @@ RUN curl -L https://github.com/heptio/velero/releases/download/v${VELERO_VERSION
     chmod +x /usr/local/bin/velero && \
     rm -rf /tmp/*
 
+#istioctl
+ARG ISTIO_VERSION=1.1.8
+RUN mkdir /istio/ && cd /istio/ curl -L https://git.io/getLatestIstio |  sh -    
+RUN cd /istio/istio-${ISTIO_VERSION} &&  cp  bin/istioctl /usr/local/bin/ 
+# RUN rm -rf istio-${ISTIO_VERSION}
+
+
+
+
 RUN conda clean --all --yes
 RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
 
@@ -132,6 +141,8 @@ RUN echo 'export PATH=$PATH:/root/dev-cheats/' >> /root/.bashrc
 
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml
+
+
 
 
 WORKDIR "/src"
