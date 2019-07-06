@@ -12,7 +12,6 @@ RUN source /root/.bashrc && conda activate awscli && conda install -y -c conda-f
 RUN source /root/.bashrc && conda activate awscli && pip install taskcat
 RUN source /root/.bashrc && conda activate sceptre && pip install sceptre
 
-
 #Versions
 ARG KUBECTL_VERSION="1.12.7/2019-03-27"
 ARG HELM_VERSION="2.14.0"
@@ -112,7 +111,7 @@ RUN curl -L https://github.com/heptio/velero/releases/download/v${VELERO_VERSION
 # # RUN rm -rf istio-${ISTIO_VERSION}
 
 
-
+RUN pip install mkdocs
 
 RUN conda clean --all --yes
 RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
