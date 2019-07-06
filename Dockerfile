@@ -105,11 +105,11 @@ RUN curl -L https://github.com/heptio/velero/releases/download/v${VELERO_VERSION
     chmod +x /usr/local/bin/velero && \
     rm -rf /tmp/*
 
-#istioctl
-ARG ISTIO_VERSION=1.1.8
-RUN mkdir /istio/ && cd /istio/ curl -L https://git.io/getLatestIstio |  sh -    
-RUN cd /istio/istio-${ISTIO_VERSION} &&  cp  bin/istioctl /usr/local/bin/ 
-# RUN rm -rf istio-${ISTIO_VERSION}
+# #istioctl
+# ARG ISTIO_VERSION=1.1.8
+# RUN mkdir /istio/ && cd /istio/ curl -L https://git.io/getLatestIstio |  sh -    
+# RUN cd /istio/istio-${ISTIO_VERSION} &&  cp  bin/istioctl /usr/local/bin/ 
+# # RUN rm -rf istio-${ISTIO_VERSION}
 
 
 
