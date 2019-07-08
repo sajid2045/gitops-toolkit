@@ -59,7 +59,7 @@ RUN echo "complete -C '/usr/local/bin/aws_completer' aws" >> /root/.bashrc
 RUN eksctl completion bash > /root/.eksctl_completion && echo "source /root/.eksctl_completion" >> /root/.bashrc 
 
 #Install JX 
-ARG JX_VERSION=v2.0.11
+ARG JX_VERSION=v2.0.420
 RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
