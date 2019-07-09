@@ -111,6 +111,13 @@ RUN curl -L https://github.com/heptio/velero/releases/download/v${VELERO_VERSION
 # # RUN rm -rf istio-${ISTIO_VERSION}
 
 
+#Install Hub
+
+RUN curl -L https://github.com/github/hub/releases/download/v2.12.1/hub-linux-amd64-2.12.1.tgz  -o /tmp/hub.tar.gz && \
+    tar -xvzf /tmp/hub.tar.gz -C /tmp && mv /tmp/hub-linux-* /usr/local/hub-linux 
+RUN echo 'export PATH=$PATH:/usr/local/hub-linux/bin' >> /root/.bashrc    
+
+
 RUN pip install mkdocs
 
 RUN conda clean --all --yes

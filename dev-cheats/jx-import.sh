@@ -1,4 +1,5 @@
 git config --global user.email sajid.moinuddin@kayosports.com.au
 git config --global user.name Sajid Moinuddin
-jx import  --org=foxsports --log-level=debug --no-draft=true  -j Jenkinsfile.groovy
+jx ns jx 
+jx import  --org=streamotion --log-level=debug --no-draft=true  -j Jenkinsfile.groovy
 #jx import --no-draft=true --org=foxsports --log-level=debug -j Jenkinsfile.groovy
