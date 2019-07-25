@@ -68,9 +68,10 @@ RUN echo "source <(kubectl completion bash)" >> /root/.bashrc
 RUN echo "source <(jx completion bash)" >> /root/.bashrc 
 
 #install kustomize
-
-RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep linux |cut -d '"' -f 4 | xargs curl -O -L
-RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
+ARG KUSTOMIZE_VERSION=2.0.3
+RUN curl -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64
+# RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep linux |cut -d '"' -f 4 | xargs curl -O -L
+RUN mv kustomize_${KUSTOMIZE_VERSION}_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
 
 #kubetail
 RUN wget https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail && chmod +x kubetail && mv kubetail /usr/local/bin 
