@@ -133,6 +133,9 @@ ADD conda-profile.sh /usr/local/etc/profile.d/conda.sh
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml
 
+# cmd okta-utils
+ADD okta-utils /usr/local/bin/
+RUN pip install --no-cache-dir -r /usr/local/bin/okta-utils-requirements.txt
 
 WORKDIR "/src"
 CMD /bin/bash
