@@ -12,7 +12,6 @@ RUN source /root/.bashrc && conda activate awscli && conda install -y -c conda-f
 RUN source /root/.bashrc && conda activate awscli && pip install taskcat
 RUN source /root/.bashrc && conda activate sceptre && pip install sceptre
 
-
 #Versions
 ARG KUBECTL_VERSION="1.12.7/2019-03-27"
 ARG HELM_VERSION="2.14.0"
@@ -60,7 +59,7 @@ RUN echo "complete -C '/usr/local/bin/aws_completer' aws" >> /root/.bashrc
 RUN eksctl completion bash > /root/.eksctl_completion && echo "source /root/.eksctl_completion" >> /root/.bashrc 
 
 #Install JX 
-ARG JX_VERSION=v2.0.11
+ARG JX_VERSION=v2.0.420
 RUN mkdir -p ~/.jx/bin
 RUN curl -L https://github.com/jenkins-x/jx/releases/download/$JX_VERSION/jx-linux-amd64.tar.gz | tar xzv -C ~/.jx/bin
 RUN export PATH=$PATH:/root/.jx/bin
@@ -69,9 +68,10 @@ RUN echo "source <(kubectl completion bash)" >> /root/.bashrc
 RUN echo "source <(jx completion bash)" >> /root/.bashrc 
 
 #install kustomize
-
-RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep linux |cut -d '"' -f 4 | xargs curl -O -L
-RUN mv kustomize_*_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
+ARG KUSTOMIZE_VERSION=2.0.3
+RUN curl -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64
+# RUN curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep linux |cut -d '"' -f 4 | xargs curl -O -L
+RUN mv kustomize_${KUSTOMIZE_VERSION}_linux_amd64 /usr/local/bin/kustomize && chmod +x /usr/local/bin/kustomize
 
 #kubetail
 RUN wget https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail && chmod +x kubetail && mv kubetail /usr/local/bin 
@@ -105,6 +105,22 @@ RUN curl -L https://github.com/heptio/velero/releases/download/v${VELERO_VERSION
     chmod +x /usr/local/bin/velero && \
     rm -rf /tmp/*
 
+# #istioctl
+# ARG ISTIO_VERSION=1.1.8
+# RUN mkdir /istio/ && cd /istio/ curl -L https://git.io/getLatestIstio |  sh -    
+# RUN cd /istio/istio-${ISTIO_VERSION} &&  cp  bin/istioctl /usr/local/bin/ 
+# # RUN rm -rf istio-${ISTIO_VERSION}
+
+
+#Install Hub
+
+RUN curl -L https://github.com/github/hub/releases/download/v2.12.1/hub-linux-amd64-2.12.1.tgz  -o /tmp/hub.tar.gz && \
+    tar -xvzf /tmp/hub.tar.gz -C /tmp && mv /tmp/hub-linux-* /usr/local/hub-linux 
+RUN echo 'export PATH=$PATH:/usr/local/hub-linux/bin' >> /root/.bashrc    
+
+
+RUN pip install mkdocs
+
 RUN conda clean --all --yes
 RUN rm -rf /downloads/ && rm -rf /tmp/eksctl
 
@@ -127,11 +143,13 @@ RUN git config --global alias.st status
 ADD dev-cheats /root/dev-cheats
 RUN echo 'export PATH=$PATH:/root/dev-cheats/' >> /root/.bashrc
 
-ADD conda-profile.sh /usr/local/etc/profile.d/conda.sh
+# ADD conda-profile.sh /usr/local/etc/profile.d/conda.sh
 # RUN echo ". /usr/local/etc/profile.d/conda.sh" >> /root/.bashrc
 
 ADD json2yaml /usr/local/bin/json2yaml
 RUN chmod +x /usr/local/bin/json2yaml
+
+
 
 
 WORKDIR "/src"
