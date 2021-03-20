@@ -7,7 +7,7 @@ colorama==0.3.7
 decorator==4.3.0
 docutils==0.14
 futures==3.2.0
-Jinja2==2.10
+Jinja2==2.11.3
 jmespath==0.9.3
 MarkupSafe==1.1.0
 networkx==2.1
