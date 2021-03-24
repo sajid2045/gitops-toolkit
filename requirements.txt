@@ -16,7 +16,7 @@ pyasn1==0.4.4
 pyparsing==2.3.0
 python-dateutil==2.7.5
 PyYAML==3.13
-rsa==3.4.2
+rsa==4.1
 s3transfer==0.1.13
 sceptre==2.1.0
 six==1.11.0
